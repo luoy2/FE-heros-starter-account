@@ -1,5 +1,8 @@
 -- 作者yluo37
 -- 时间: 2016-12-28
+
+
+
 function myFindColor(input_table)
 	accept_quest()
 	if input_table == nil then

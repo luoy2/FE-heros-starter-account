@@ -6,15 +6,19 @@ require "spec"
 require "utils"
 _G.ios = 10
 id = createHUD()
-function tap_till_skip(end_state)
+function tap_till_skip(end_state, tap_x, tap_y)
+	local tap_x = tap_x or 780
+	local tap_y = tap_y or 1402
   local end_state = end_state or 跳过剧情
   local skip_x, skip_y = myFindColor(end_state)
   while skip_x == -1 do
-    tap(780, 1402)
+    tap(tap_x, tap_y)
     mSleep(200)
     skip_x, skip_y = myFindColor(end_state)
   end
-  tap(1324, 76)
+	if end_state == 跳过剧情 then
+		tap(1324, 76)
+	end
 end
 
 function 召唤一次(x,y)
@@ -141,38 +145,44 @@ function main_flow()
     toast("启动应用失败");
     runApp("com.nintendo.zaba")
   end
-  wait_for_state(拒绝推送)
-  mSleep(3000)
-  my_toast(id, '拒绝推送')
-  state_transit(拒绝推送, select_country, 659, 1158, true)
+	if _G.ios > 8 then
+		wait_for_state(拒绝推送)
+		mSleep(3000)
+		my_toast(id, '拒绝推送')
+		state_transit(拒绝推送, select_country, 659, 1158, true)
+	end
   my_toast(id, '选择地区')
   state_transit(select_country, 选好地区, 780, 590)
   my_toast(id, '选好地区')
   state_transit(选好地区, 用户协议, 777, 1702)
   my_toast(id, '用户协议')
   state_transit(用户协议, 稍后绑定, 762, 1362)
+	my_toast(id, '稍后绑定')
   state_transit(稍后绑定, 开始游戏, 761, 1520)
+	my_toast(id, '开始游戏')
   state_transit(开始游戏, 开始下载, 778, 1591)
+	my_toast(id, '开始下载')
   state_transit(开始下载, 下载结束, 795, 1255)
   tap(786, 1161)
   mSleep(1000)
   tap_till_skip(跳过动画)
+	my_toast(id, '跳过动画')
   state_transit(跳过动画, 确认名字, 766, 1011)
+	my_toast(id, '确认名字')
   state_transit(确认名字, 跳过剧情, 776, 1295, true)
   tap(1324, 76)
   mSleep(1000)
+	my_toast(id, '跳过剧情')
   wait_for_state(跳过剧情)
   tap(1324, 76)
   mSleep(1000)
   swip(279, 1179, 672, 1186)
   mSleep(1000)
-  wait_for_state(跳过剧情)
+  tap_till_skip()
   tap(1324, 76)
   mSleep(1000)
   swip(672, 1186, 1056, 990)
   tap_till_skip()
-  
-  
   mSleep(1000)
   wait_for_state(跳过剧情)
   tap(1324, 76)
@@ -208,46 +218,17 @@ function main_flow()
   tap(764, 1009)
   tap_till_skip()
   tap_till_skip()
+	my_toast(id, "得到orb")
   state_transit(得到orb, 开始下载, 771, 1243)
+	my_toast(id, "正在下载")
   state_transit(开始下载, {0xf1d0a4,"19|3|0xe4bb93,26|3|0xe3b892,52|-10|0x406276,39|33|0xc8476c,9|37|0xc9486b,-11|25|0xb1364f",95,186,372,279,457}, 795, 1255)
   mSleep(2000)
-  --[[
-  --打三场
-  wait_for_state(作战章节)
-  tap(735, 680)
-  mSleep(500)
-  tap(735, 680)
-  mSleep(500)
-  tap(763, 1182)  --fight!
-  tap_till_skip()
-  tap_till_skip()
-  
-  wait_for_state(关闭三角)
-  tap(758, 1431)
-  auto_combat()
-  tap_till_skip()
-  wait_for_state(得到orb)
-  tap(771, 1243)
-  mSleep(1000)
-  tap(770, 1401)
-  mSleep(1000)
-  tap(770, 1401)
-  mSleep(1000)
-  tap(770, 1401)
-  mSleep(1000)
-  
-  一次战斗2()
-  一次战斗3()
-  --]]
-  sysLog('下载完成')
+  my_toast(id, '下载完成')
   --wait_for_state({0xf1d0a4,"19|3|0xe4bb93,26|3|0xe3b892,52|-10|0x406276,39|33|0xc8476c,9|37|0xc9486b,-11|25|0xb1364f",95,186,372,279,457})
   state_transit({0xf1d0a4,"19|3|0xe4bb93,26|3|0xe3b892,52|-10|0x406276,39|33|0xc8476c,9|37|0xc9486b,-11|25|0xb1364f",95,186,372,279,457}, 得到orb, 278, 1949, true)
-  sysLog('得到球')
+  my_toast(id, '得到奖励')
   wait_for_state(得到orb)
-  tap(777, 1297)
-  mSleep(1000)
-  tap(777, 1297)
-  mSleep(1000)
+	tap_till_skip(邮件未读, 761, 1290)
   tap(1095, 643)
   mSleep(1000)
   tap(1095, 643)
@@ -318,6 +299,10 @@ function delete_game()
       tap(897, 1131)
     else
       tap(631, 1130)
+			if _G.ios == 8 then
+				mSleep(500)
+				tap(631, 1130)
+			end
     end
     mSleep(500)
     myPressHomeKey()  --返回桌面
@@ -335,9 +320,10 @@ function delete_game()
     return delete_game()
   end
 end
-_G.ios = 9
-choice = dialogRet("选择ios", "IOS9", "IOS10", "", 0);
+_G.ios = 8
+choice = dialogRet("选择ios", "IOS8", "IOS9", "IOS10", 0);
 _G.ios = _G.ios + choice
 reset()
 main_flow()
+
 

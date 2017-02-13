@@ -4,7 +4,6 @@
 
 
 function myFindColor(input_table)
-	accept_quest()
 	if input_table == nil then
 		return -1, -1
 	else
@@ -60,22 +59,6 @@ function my_toast(id, my_string)
 end
 
 
-function if_outof_sushi(if_lock)
-	local if_lock = if_lock or true
-	mSleep(500)
-  x, y = findMultiColorInRegionFuzzy(0xe32e16,"-24|-124|0x60466e,-16|14|0xc6a98a,91|4|0xf3b25e", 93, 976, 931, 1023, 974)
-  if x > -1 then
-    my_toast(id, '已经没有体力啦！')
-		if if_lock then
-			my_exist(_G.exist_method)
-		else
-			tap(1500, 500)
-			wait_for_leaving_state({0xd6c4a1,"3|-6|0x888259,4|-19|0xd6c4a1",96,1820,33,1852,67})
-		end
-  end
-end
-
-
 
 
 function my_exist(lock)
@@ -110,7 +93,6 @@ function sysLogLst(...)
 end
 
 function tap(x, y)
-  accept_quest()
   math.randomseed(tostring(os.time()):reverse():sub(1, 6))  --设置随机数种子
   local index = math.random(1,5)
   local rand_x = x + math.random(-2,2)
@@ -253,153 +235,6 @@ return keys
 end
 
 
-function check_current_state()
-	keepScreen(true)
-	local scroll_x, scroll_y = myFindColor(主界面卷轴)
-  --local main_x, main_y = findMultiColorInRegionFuzzy(0x8f5ea0,"-45|-4|0xbdb5a4,-38|45|0xf8f3e0,59|17|0x603d3a", 90, 434,1413, 438, 1417)
-  local main_x, main_y = myFindColor(组队)
-	local intansuo_x, intansuo_y = findColorInRegionFuzzy(0x2e4432, 95, 3, 1525, 9, 1531); --战斗界面左下角绿色
-  local tansuo_x, tansuo_y = findColorInRegionFuzzy(0x1e1ea6, 95, 314, 1493, 340, 1509) -- 探索yuhun下方蓝色
-  local incombat_x, incombat_y = findColorInRegionFuzzy(0x856e56, 95, 86, 1485, 110, 1494) --战斗左下角小齿轮颜色
-  local tupo_x, tupo_y = findMultiColorInRegionFuzzy(0xc7241c,"-13|8|0xf7f2df,-14|-35|0xf4efe1", 95, 888, 1078, 888, 1078)  --3次达摩周边色
-  local yuhun_x, yuhun_y = findMultiColorInRegionFuzzy(0xf3b25e,"-82|54|0x423a33,-87|-34|0x342f27,-62|9|0x302a23", 95, 1450,980,1460, 990)
-	local yeyuanhuo_x, yeyuanhuo_y = myFindColor(业原火)
-	local yeyuanhuo_challenge_x, yeyuanhuo_challenge_y = myFindColor(业原火挑战)
-	local party_x, party_y = myFindColor(组队界面)
-	local tap_exit_x, tap_exit_y = myFindColor(顶点退出)
-	local redcross_x, redcross_y = myFindColor(右上红叉)
-	local defeat_x, defeat_y = findMultiColorInRegionFuzzy(0x5c5266,"21|-70|0x50495a,82|0|0x595063,37|-11|0xb7a58f,42|31|0xc1ae94,62|77|0xbba689,28|109|0x6c5638,27|146|0x201d25,-54|32|0xbca78a,-5|28|0x230a07", 90, 583, 159, 980, 508)  -- 鼓上的裂纹
-	local win_x, win_y = findMultiColorInRegionFuzzy(0x79180f,"49|74|0x951b11,6|52|0xcebfab,-67|124|0xdaceb6,15|112|0xd3c5af,103|115|0xcfbfa9,26|149|0xd8c9b0,20|206|0x580f01,14|238|0x902117,-24|73|0x971b11", 90, 583, 159, 980, 508)  --鼓的红色
-	local chat_cross_x, chat_cross_y = myFindColor(聊天红叉)
-	local creat_x = myFindColor(创建队伍)
-	local 好友结界_x, 好友结界_y = myFindColor(好友结界)
-	local 第一灯笼_x, 第一灯笼_y = myFindColor(第一灯笼)
-	local ready_x, ready_y = myFindColor(准备)
-	
-	
-	keepScreen(false)
-	
-	if scroll_x > -1 then
-		tap(scroll_x, scroll_y)
-		mSleep(1000)
-		return check_current_state()
-	end
-
-  if main_x > -1 then        
-    sysLog('当前处于庭院或者町中。。。')
-    my_toast(id, '当前处于庭院或者町中')
-		my_swip_2(1800, 1250, 200, 1250, 0, 30, 50)
-		local machi_x, machi_y = myFindColor(町中)
-    if machi_x > -1 then
-			sysLog('当前处于町中。。。')
-      return 'machi'
-		else
-			sysLog('当前处于庭院')
-			return 1
-    end
-	elseif 好友结界_x > -1 then
-		sysLog("好友结界")
-		tap(67, 71)
-		mSleep(1000)
-		return check_current_state()
-  elseif intansuo_x > -1 then
-    if incombat_x > -1 then
-      sysLog("当前处于战斗中。。。")
-			end_combat(0)
-			mSleep(2000)
-			return check_current_state()
-    elseif 第一灯笼_x > -1 then
-			sysLog('好友寄养界面')
-			my_toast(id, '寄养界面')
-			tap(67, 71)
-			wait_for_state(式神育成)
-			tap(67, 71)
-			mSleep(2000)
-			return check_current_state()
-		elseif ready_x > -1 then
-			sysLog('准备界面')
-			my_toast(id, '准备界面')
-			tap(ready_x, ready_y)
-			mSleep(2000)
-			return check_current_state()
-		else
-      sysLog('当前处于探索副本里。。。')
-      return 22
-    end
-  elseif tansuo_x > -1 then      --如果没找到符合条件的
-    sysLog("当前处于探索界面。。。");
-    return 3
-  elseif tupo_x > -1 then
-    sysLog("当前处于突破界面")
-    return 'tupo'
-  elseif intansuo_x > -1 then
-    if incombat_x > -1 then
-      sysLog("当前处于御魂中。。。")
-    end
-    return 5
-	elseif yeyuanhuo_x > -1 then
-		sysLog('yeyuanhuo')
-    return 'yeyuanhuo'
-	elseif yeyuanhuo_challenge_x > -1 then
-		sysLog('yeyuanhuo_challenge')
-		return 'yeyuanhuo_challenge'
-	elseif party_x > -1 then
-		sysLog('party')
-		return 'party'
-	elseif tap_exit_x > -1 then
-		sysLog('找到退出')
-		my_toast(id, '稍等')
-		tap(tap_exit_x, tap_exit_y)
-		mSleep(500)
-		return check_current_state()
-	elseif redcross_x > -1 then
-		my_toast(id, '稍等')
-		sysLog('找到红叉')
-		tap(redcross_x, redcross_y)
-		mSleep(500)
-		return check_current_state()
-	elseif chat_cross_x > -1 then
-		my_toast(id, '聊天界面')
-		tap(chat_cross_x, chat_cross_y)
-		mSleep(500)
-		return check_current_state()
-	elseif defeat_x > -1 or win_x > -1 then
-		my_toast(id, '结算界面')
-		end_combat()
-		mSleep(1000)
-		return check_current_state()
-  elseif  creat_x > -1 then
-		my_toast(id, '创建队伍界面')
-		return 'create_party'
-	else
-    my_toast(id, "当前界面未知")
-		tap(20, 1329)
-		sysLog('点击边缘试试')
-		waiting_clock(3000)
-		return check_current_state()
-  end
-end	
-
-
-
-function accept_quest()
-  local accept_x, accept_y = findMultiColorInRegionFuzzy(0x60ba6b,"1|-16|0x342325,-12|-1|0x58b563,22|-4|0x60ba6b,2|41|0x322124", 95, 1357, 847, 1361, 851)
-	if accept_x > -1 then
-    sysLog("找到悬赏")
-		if _G.friend_quest_action == '0' then
-			sysLog("接受悬赏")
-			touchDown(1, accept_x, accept_y)
-			mSleep(30)
-			touchUp(1, accept_x,accept_y)
-		else
-			sysLog("拒绝悬赏")
-			touchDown(1, 1365, 1010)
-			mSleep(30)
-			touchUp(1, 1365, 1010)
-		end
-    sleepRandomLag(300)
-  end
-end
 
 
 ColorCheck = {}
@@ -468,7 +303,7 @@ function wait_for_state(input_table, limit_seconds)
 	local qTime = mTime()
 	local wait_x, wait_y = myFindColor(input_table)
 	while (mTime() - qTime) <= limit_seconds do
-		mSleep(10)
+		mSleep(100)
 		--sysLog(mTime() - qTime)
 		wait_x, wait_y = myFindColor(input_table)
 		if wait_x ~= -1 then
@@ -525,13 +360,57 @@ function waiting_clock(wait_time)
 	local need_wait = (wait_time - time_passed)/1000
 	local output_s = string.format("%.2d:%.2d:%.2d", need_wait/(60*60), need_wait/60%60, need_wait%60)
 	while time_passed <= wait_time do
-		accept_quest()
 		my_toast(id, '需要等待'..output_s)
 		mSleep(1000)
 		time_passed = mTime() - qTime
 		need_wait = (wait_time - time_passed)/1000
 		output_s = string.format("%.2d:%.2d:%.2d", need_wait/(60*60), need_wait/60%60, need_wait%60)
 	end
+end
+
+
+function tap_till_skip(end_state, tap_x, tap_y, lag)
+	local tap_x = tap_x or 780
+	local tap_y = tap_y or 1402
+	local lag = lag or 300
+  local end_state = end_state or 跳过剧情
+	keepScreen(true)
+  local skip_x, skip_y = myFindColor(end_state)
+	local skip_x_2, skip_y_2 = myFindColor(跳过剧情)
+	keepScreen(false)
+  while skip_x == -1 do
+    tap(tap_x, tap_y)
+    mSleep(lag)
+		if skip_x_2 > -1 then
+			tap(1324, 76)
+		end
+		keepScreen(true)
+    skip_x, skip_y = myFindColor(end_state)
+		skip_x_2, skip_y_2 = myFindColor(跳过剧情)
+		keepScreen(false)
+  end
+end
+
+function myPressHomeKey()
+  tap(1453, 1943)
+  mSleep(500)
+  tap(772, 1240)
+  mSleep(500)
+  tap(785, 1561)
+  mSleep(500)
+end
+
+
+
+
+function myScreenShot()
+  tap(1453, 1943)
+  mSleep(500)
+  tap(978, 909)
+  mSleep(500)
+  tap(903, 1232)
+  mSleep(500)
+  tap(1016, 1109)
 end
 
 

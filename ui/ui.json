@@ -1,10 +1,67 @@
 {
-	"style" : "default",
-	"config" : "save_火焰纹章刷初始.dat",
-	"width" : 540,
-	"height" : 960,
-	"cancelname" : "取消",
-	"okname" : "确定",
-	"views" : [
-	]
+   "style" : "default", //样式属性。custom为自定义 default为默认。新手可以使用默认
+   "config" : "FEheros_starter.dat",
+   "width" : 800,
+   "height" : 600, //界面宽高 建议和背景图片尺寸保持一致
+   //"bg": "bg.png",    //这是背景图片（可以不填）
+   "cancelname" : "取消脚本", //这是取消的文字
+   "okname" : "开始脚本", //这是确定的文字
+   "views" : [
+      {
+         "type" : "Page",
+         "style" : "custom",
+         "text" : "刷初始设置",
+         "views" : [
+            {
+               "type" : "Label",
+               "text" : "请选择ios版本:",
+               "size" : 25,
+               "align" : "left",
+               "width" : 100,
+               "color" : "255,0,0" //由于多选框的文字默认为黑色 所以我在这里加了个标签，标签的文字可以自定义颜色
+            },
+            //"rect": "55,20,300,80"
+            {
+               "id" : "001",
+               "list" : "IOS8,IOS9,IOS10",
+               "select" : "0",
+               "size" : "30",
+               "type" : "RadioGroup",
+               "orientation" : "horizontal"
+            },
+            {
+               "type" : "Label",
+               "text" : "请选择停止条件:",
+               "size" : 25,
+               "align" : "left",
+               "width" : 100,
+               "color" : "255,0,0" //由于多选框的文字默认为黑色 所以我在这里加了个标签，标签的文字可以自定义颜色
+            },
+            //"rect": "55,20,300,80"
+            {
+               "id" : "002",
+               "list" : "单五星停止, 双五星停止, 三五星停止",
+               "select" : "0",
+               "size" : "30",
+               "type" : "RadioGroup",
+               "orientation" : "horizontal"
+            }
+         ]
+      },
+      {
+         "type" : "Page",
+         "style" : "custom",
+         "text" : "设置说明",
+         "views" : [
+            {
+               "type" : "Label",
+               "text" : "- 建议刷完序章出双5概率大, 否则图效率可直接4抽",
+               "size" : 30,
+               "align" : "left",
+               "width" : 100,
+               "color" : "255, 0, 0"
+            }
+         ]
+      }
+   ]
 }

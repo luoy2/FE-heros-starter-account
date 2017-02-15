@@ -323,7 +323,7 @@ function wait_for_leaving_state(input_table, tap_table)
 		end
 		keepScreen(false)
 		--sysLog(wait_x)
-		mSleep(10)
+		mSleep(100)
 		wait_x, wait_y = myFindColor(input_table)
 	end
 end
@@ -392,12 +392,13 @@ function tap_till_skip(end_state, tap_x, tap_y, lag)
 end
 
 function myPressHomeKey()
-  tap(1453, 1943)
-  mSleep(500)
+	mSleep(1000)
+	tap(1453, 1943)
+  mSleep(1000)
   tap(772, 1240)
-  mSleep(500)
+  mSleep(1000)
   tap(785, 1561)
-  mSleep(500)
+  mSleep(1000)
 end
 
 

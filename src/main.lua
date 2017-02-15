@@ -22,7 +22,12 @@ function main()
 	end
 end
 
-main()
+--main()
+inputText("su#ENTER#")
+mSleep(500)
+inputText("alpine#ENTER#")
+mSleep(500)
+inputText("launchctl kickstart -k system/com.apple.cfprefsd.xpc.daemon#ENTER#")
 
 --[[
 local if_fight_x, if_fight_y = myFindColor(章节感叹号)

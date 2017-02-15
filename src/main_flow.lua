@@ -242,7 +242,8 @@ function delete_game()
     mSleep(1000)
     tap(game_x-77, game_y-70)
     mSleep(1000)
-		wait_for_state({0xc6ddeb,"15|5|0xc7deeb,34|4|0xc6ddeb",95,596,1083,662,1108})
+		my_toast(id, '删除方式:IOS'.._G.ios)
+		wait_for_state({0xc6ddeb,"15|5|0xc7deeb,34|4|0xc6ddeb",90,596,1083,662,1108})
     if _G.ios == 10 then
       tap(897, 1131)
     else

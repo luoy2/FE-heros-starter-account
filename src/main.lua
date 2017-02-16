@@ -1,12 +1,14 @@
 init("0", 0)
 setScreenScale(1536,2048)
 -- com.nintendo.zaba
+-- com.officialscheduler.mterminal
 --ui 选择卡池, 选择服务器
 require "spec"
 require "utils"
 require "main_flow"
 
 id = createHUD()
+_G.if_canceld_anima = true
 
 function main()
 	ret,results = showUI("ui.json")
@@ -15,34 +17,26 @@ function main()
 		lua_exit()
 	else
 		_G.ios = 8
-		_G.ios = _G.ios + tonumber(results['001'])
 		_G.end_condition = tonumber(results['002'])+1
 		reset()
 		return main_flow()
 	end
 end
+	--reset()
 
---main()
-inputText("su#ENTER#")
-mSleep(500)
-inputText("alpine#ENTER#")
-mSleep(500)
-inputText("launchctl kickstart -k system/com.apple.cfprefsd.xpc.daemon#ENTER#")
 
+
+main()
 --[[
-local if_fight_x, if_fight_y = myFindColor(章节感叹号)
-for i = 1, 5, 1 do
-	if if_fight_x > -1 then
-		tap(if_fight_x+373, if_fight_y + 143)
-		mSleep(500)
-		tap(763, 1190)
-		tap_till_skip(主设置)
-		auto_combat()
-		tap_till_skip(得到orb)
-		tap(771, 1243)
-		mSleep(500)
-		tap_till_skip(故事模式抬头, nil, nil, 1000)
-		if_fight_x, if_fight_y = myFindColor(章节感叹号)
-	end
-end
---]]
+	closeApp("com.nintendo.zaba")
+	closeApp("com.officialscheduler.mterminal")
+	myRunAPP("com.officialscheduler.mterminal")
+	wait_for_state(命令完成)
+	inputText("su#ENTER#")
+	wait_for_state(命令完成)
+	inputText("alpine#ENTER#")
+	delete()
+	inputText("launchctl kickstart -k system/com.apple.cfprefsd.xpc.daemon#ENTER#")
+	wait_for_state(命令完成)
+	closeApp("com.officialscheduler.mterminal")
+	--]]

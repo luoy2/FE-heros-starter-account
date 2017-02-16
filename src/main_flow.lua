@@ -1,28 +1,9 @@
-
-function reset()
-	closeApp("com.nintendo.zaba")
-  delete_game()
-  my_toast(id, '准备下载游戏')
-  tap(1298, 1905)
-  wait_for_state(游戏可以下载)
-  tap(560, 732)
-  sysLog('等待下载完成')
-  my_toast(id, '正在下载游戏')
-  wait_for_state(游戏下载完成)
-  my_toast(id, '游戏下载完成')
-  sysLog('游戏下载完成')
-	mSleep(1000)
-	runApp("com.nintendo.zaba")
-end
-
-
 function auto_combat()
   toast("自动战斗")
   state_transit(主设置, 设置1, 114, 1966)
   state_transit(设置1, 确认自动战斗, 757, 1048)
   tap(764, 1009)
 end
-
 
 
 function get_result()
@@ -51,21 +32,73 @@ end
 
 
 function 召唤一次(x,y)
-tap(x,y)
-mSleep(500)
-tap(783, 1832)
-mSleep(1000)
-tap_till_skip(重复召唤)
+	tap(x,y)
+	mSleep(500)
+	tap(783, 1832)
+	mSleep(1000)
+	tap_till_skip(重复召唤)
 end
 
 
+function link_account(inputText)
+	myScreenShot()
+	snapshot("1.png", 0,0,1444,2044); --全屏截图（分辨率1080*1920）
+	state_transit(召唤结束, 游戏评价, 766, 1760)
+	mSleep(1000)
+	tap(768, 1169)
+	mSleep(500)
+	tap(1236, 1947)
+	mSleep(1500)
+	tap(770, 854)
+	wait_for_state({0x92d6a9,"16|1|0x97d9ae,38|-2|0x8ad0a3,54|-2|0x8ad0a3",95,723,1257,787,1275})
+	tap(780, 1221)
+end
+
+
+function reset()
+	mark = createHUD()
+	closeApp("com.nintendo.zaba")
+	closeApp("com.officialscheduler.mterminal")
+	myRunAPP("com.officialscheduler.mterminal")
+	wait_for_state(命令完成)
+	local x, y = myFindColor(命令完成)
+	showHUD(mark,"等待脚本删除存档...",20,"0xff000000","0xffff0000",0,0,0,1534,y)      --显示HUD内容
+	inputText("su#ENTER#")
+	wait_for_state(命令完成)
+	inputText("alpine#ENTER#")
+	wait_for_state(命令完成)
+	x, y = myFindColor(命令完成)
+	showHUD(mark,"等待脚本删除存档...",20,"0xff000000","0xffff0000",0,0,0,1534,y)
+	inputText('cd /var/mobile/Containers/Data/Application/ && rm "$(find . -name com.nintendo.zaba.plist -type f)"#ENTER#')
+	wait_for_state(命令完成)
+	x, y = myFindColor(命令完成)
+	showHUD(mark,"等待脚本删除存档...",20,"0xff000000","0xffff0000",0,0,0,1534,y)
+	inputText("launchctl kickstart -k system/com.apple.cfprefsd.xpc.daemon#ENTER#")
+	wait_for_state(命令完成)
+	closeApp("com.officialscheduler.mterminal")
+	mSleep(1000)
+	hideHUD(mark)
+end
+
 
 function main_flow()
-	if _G.ios > 8 then
-		my_toast(id, '拒绝推送')
-		state_transit(拒绝推送, select_country, 659, 1158, true)
-	end
+	myRunAPP("com.nintendo.zaba")
   my_toast(id, '选择地区')
+	keepScreen(true)
+	local x_1, y_1 = myFindColor(开始游戏)
+	local x_2, y_2 = myFindColor(select_country)
+	keepScreen(false)
+	while x_1 == -1 and x_2 == -1 do
+		mSleep(200)
+			keepScreen(true)
+			x_1, y_1 = myFindColor(开始游戏)
+			x_2, y_2 = myFindColor(select_country)
+			keepScreen(false)
+	end
+	if x_1 > -1 then
+		reset()
+		return main_flow()
+	end
   state_transit(select_country, 选好地区, 780, 590)
   my_toast(id, '选好地区')
   state_transit(选好地区, 用户协议, 777, 1702)
@@ -73,10 +106,23 @@ function main_flow()
   state_transit(用户协议, 稍后绑定, 762, 1362)
 	my_toast(id, '稍后绑定')
   state_transit(稍后绑定, 开始游戏, 761, 1520)
-	my_toast(id, '开始游戏')
-  state_transit(开始游戏, 开始下载, 778, 1591)
-	my_toast(id, '开始下载')
-  state_transit(开始下载, 下载结束, 795, 1255)
+	x_1, y_1 = myFindColor(开始下载)
+	x_2, y_2 = myFindColor(下载结束)
+	keepScreen(false)
+	while x_1 == -1 and x_2 == -1 do
+			tap(778, 1591)
+			mSleep(500)
+			keepScreen(true)
+			x_1, y_1 = myFindColor(开始下载)
+			x_2, y_2 = myFindColor(下载结束)
+			keepScreen(false)
+	end
+	if x_1 > -1 then
+		my_toast(id, '开始下载')
+  		state_transit(开始下载, 下载结束, 795, 1255)
+	else
+		my_toast(id, '下载结束')
+	end
   tap(786, 1161)
   mSleep(1000)
   tap_till_skip(跳过动画)
@@ -102,24 +148,22 @@ function main_flow()
   swip(275, 1369, 876, 1216)
   mSleep(500)
   tap_till_skip(主设置)
-  state_transit(主设置, 设置1, 114, 1966)
-  state_transit(设置1, 设置2, 763, 840)
-  --点击设置
-  
-  --取消动画
-  my_toast(id, '取消动画')
-  tap(1005, 1383)
-  mSleep(500)
-  tap(1005, 1383)
-  mSleep(500)
-  
-  tap(1005, 1592)
-  mSleep(500)
-  tap(1005, 1592)
-  mSleep(500)
-  
-  my_toast(id, "退出设置")
-  state_transit(设置2, 主设置, 233, 247)
+  if _G.if_canceld_anima then
+  		my_toast(id, '检测是否关闭动画')
+	  state_transit(主设置, 设置1, 114, 1966)
+	  state_transit(设置1, 设置2, 763, 840)
+	  --点击设置
+	  
+	  --取消动画
+	  my_toast(id, '取消动画')
+	  tap_till_skip(关闭动画1, 1005, 1383, 800)
+	  tap_till_skip(关闭动画2, 1005, 1592, 800)
+
+	  
+	  my_toast(id, "退出设置")
+	  state_transit(设置2, 主设置, 233, 247)
+	  _G.if_canceld_anima = false
+	end
   state_transit(主设置, 设置1, 114, 1966)
   my_toast(id, "自动战斗")
   state_transit(设置1, 确认自动战斗, 757, 1048)
@@ -127,9 +171,10 @@ function main_flow()
   tap_till_skip(得到orb)
 	my_toast(id, "得到orb")
   state_transit(得到orb, 开始下载, 771, 1243)
+
+
 	tap(795, 1255)
 	my_toast(id, "正在下载")
-	mSleep(60000)
 	wait_for_state(故事模式抬头)
   my_toast(id, '下载完成')
 	state_transit(prologue, prologue_part_1, 783, 683, true)
@@ -145,13 +190,15 @@ function main_flow()
 			tap_till_skip(主设置)
 			auto_combat()
 			tap_till_skip(得到orb)
-			tap(771, 1243)
+			wait_for_leaving_state(得到orb, {true, 771, 1243})
 			mSleep(500)
 			tap_till_skip(故事模式抬头, nil, nil, 1000)
 			wait_for_state(章节感叹号)
 			if_fight_x, if_fight_y = myFindColor(章节感叹号)
 		end
 	end
+	
+
 	my_toast(id, '开始第3次战斗')
 	tap(if_fight_x+373, if_fight_y + 143)
 	mSleep(500)
@@ -159,43 +206,37 @@ function main_flow()
 	tap_till_skip(主设置)
 	auto_combat()
 	tap_till_skip(得到orb)
-	tap(771, 1243)
-	mSleep(500)
+	wait_for_leaving_state(得到orb, {true, 771, 1243})
+	--[[
+	wait_for_state(解锁章节)
+	wait_for_leaving_state(解锁章节, {true, 765, 1101})
+		wait_for_state(解锁章节)
+	wait_for_leaving_state(解锁章节, {true, 765, 1101})
+		wait_for_state(解锁章节)
+	wait_for_leaving_state(解锁章节, {true, 765, 1101})
+	--]]
 	my_toast(id, '3次战斗已完成')
-	tap(765, 1101)				--解锁新章节
-	mSleep(1000)
-	tap(765, 1101)
-
-	tap_till_skip(故事模式抬头, nil, nil, 1000)
+	tap_close_till_stop(故事模式抬头, nil, nil, 1000)
 
 
   state_transit(故事模式退出, 得到orb, 278, 1949, true)
   my_toast(id, '得到奖励')
   wait_for_state(得到orb)
 	tap_till_skip(邮件未读, 761, 1290)
-  tap(1095, 643)
-  mSleep(1000)
-  tap(1095, 643)
-  mSleep(1000)
-  tap(784, 609)
-  mSleep(1000)
-  tap(762, 1003)
-  wait_for_state(收到物品)
-  tap(785, 1111)
-  mSleep(500)
-  tap(244, 250)
-  mSleep(1000)
+	tap_till_skip(接受邮件, 1033, 602)
+	tap_till_skip(收到物品, 756, 995)
+	tap_till_skip(顶点退出, 762, 1101, 500)
+	tap(244, 250)
+	mSleep(1000)
   
   --开始召唤
   my_toast(id, "开始召唤")
   tap(859, 1936)
-  mSleep(500)
-  tap(794, 1398)
-  mSleep(1000)
-  tap(1473, 1002)
+	tap_close_till_stop(初始召唤, nil, nil, 1000)
+	tap(1473, 1002)
   mSleep(1000)
   tap(743, 1721)
-  mSleep(1000)
+	wait_for_state(Redeem)
   tap(750, 1103)
 	wait_for_state(开始召唤)
 	for i = 1, 4, 1 do
@@ -216,11 +257,6 @@ function main_flow()
     reset()
     return main_flow()
   else 
-		--link_account()
-				--[[
-		lockDevice()
-		lua_exit()
-		--]]
 		choice = dialogRet("英雄星级:"..result_table[1]..", "..result_table[2]..", "..result_table[3]..", "..result_table[4]..", "..result_table[5].."; 是否重刷?", "是", "否", "", 0);
 		if choice == 0 then
 			reset()
@@ -229,58 +265,3 @@ function main_flow()
 	end
 end
 
-
-function delete_game()
-  my_toast(id, '正在寻找游戏位置')
-  local game_x, game_y = myFindColor(游戏图标)
-  sysLog(game_x..","..game_y)
-  if game_x > -1 then
-    my_toast(id, '找到游戏位置')
-    touchDown(0, game_x, game_y)
-    mSleep(2000)
-    touchUp(0, game_x, game_y)
-    mSleep(1000)
-    tap(game_x-77, game_y-70)
-    mSleep(1000)
-		my_toast(id, '删除方式:IOS'.._G.ios)
-		wait_for_state({0xc6ddeb,"15|5|0xc7deeb,34|4|0xc6ddeb",90,596,1083,662,1108})
-    if _G.ios == 10 then
-      tap(897, 1131)
-    else
-      tap(631, 1130)
-			if _G.ios == 8 then
-				mSleep(500)
-				tap(631, 1130)
-			end
-    end
-    mSleep(500)
-    myPressHomeKey()  --返回桌面
-  else
-    my_toast(id, '未找到游戏图标!请于5秒内切换到游戏图标页面')
-    mSleep(1000)
-    my_toast(id, '未找到游戏图标!请于4秒内切换到游戏图标页面')
-    mSleep(1000)
-    my_toast(id, '未找到游戏图标!请于3秒内切换到游戏图标页面')
-    mSleep(1000)
-    my_toast(id, '未找到游戏图标!请于2秒内切换到游戏图标页面')
-    mSleep(1000)
-    my_toast(id, '未找到游戏图标!请于1秒内切换到游戏图标页面')
-    mSleep(1000)
-    return delete_game()
-  end
-end
-
-
-function link_account(inputText)
-	myScreenShot()
-	snapshot("1.png", 0,0,1444,2044); --全屏截图（分辨率1080*1920）
-	state_transit(召唤结束, 游戏评价, 766, 1760)
-	mSleep(1000)
-	tap(768, 1169)
-	mSleep(500)
-	tap(1236, 1947)
-	mSleep(1500)
-	tap(770, 854)
-	wait_for_state({0x92d6a9,"16|1|0x97d9ae,38|-2|0x8ad0a3,54|-2|0x8ad0a3",95,723,1257,787,1275})
-	tap(780, 1221)
-end

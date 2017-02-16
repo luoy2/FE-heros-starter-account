@@ -14,23 +14,6 @@
          "views" : [
             {
                "type" : "Label",
-               "text" : "请选择ios版本:",
-               "size" : 25,
-               "align" : "left",
-               "width" : 100,
-               "color" : "255,0,0" //由于多选框的文字默认为黑色 所以我在这里加了个标签，标签的文字可以自定义颜色
-            },
-            //"rect": "55,20,300,80"
-            {
-               "id" : "001",
-               "list" : "IOS8,IOS9,IOS10",
-               "select" : "0",
-               "size" : "30",
-               "type" : "RadioGroup",
-               "orientation" : "horizontal"
-            },
-            {
-               "type" : "Label",
                "text" : "请选择停止条件:",
                "size" : 25,
                "align" : "left",

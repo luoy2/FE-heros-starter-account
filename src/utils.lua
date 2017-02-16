@@ -12,6 +12,7 @@ function myFindColor(input_table)
 	end
 end
 
+
 function toast_screensize()
   width,height = getScreenSize()
   if (width == 960 and height== 640 )or (width==640 and height==960 ) 		then--4
@@ -33,11 +34,13 @@ function toast_screensize()
   toast(device_type)
 end
 
+
 function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
   return count
 end
+
 
 function table.contains(table, element)
   for _, value in pairs(table) do
@@ -48,6 +51,7 @@ function table.contains(table, element)
   return false
 end
 
+
 function printTable(t)
 for key,value in pairs(t) do sysLog(key..': '..value) end
 end
@@ -55,10 +59,8 @@ end
 
 function my_toast(id, my_string)
   --showHUD(id, my_string ,50,"0xffffffff",'hud2.png',0,100,95,600,78)    
-	showHUD(id, my_string ,35,"0xffffffff",'hud.png',0,100,95,600,78)    
+	showHUD(id, my_string ,35,"0xff00ff00",'hud.png',0,100,95,600,78)    
 end
-
-
 
 
 function my_exist(lock)
@@ -69,8 +71,6 @@ function my_exist(lock)
     lua_exit();
   end
 end
-
-
 
 
 function sleepRandomLag(default)
@@ -235,8 +235,6 @@ return keys
 end
 
 
-
-
 ColorCheck = {}
 function ColorCheck:new_ColorCheckSystem(rigion,point_tab,n,p)
 	local o = {};
@@ -297,7 +295,6 @@ function ColorCheck:new_ColorCheckSystem(rigion,point_tab,n,p)
 end
 
 
-
 function wait_for_state(input_table, limit_seconds)
 	local limit_seconds = limit_seconds or 99999999999
 	local qTime = mTime()
@@ -312,6 +309,7 @@ function wait_for_state(input_table, limit_seconds)
 	end
 	return false
 end
+
 
 function wait_for_leaving_state(input_table, tap_table)
 	local tap_table = tap_table or {false}
@@ -348,10 +346,6 @@ function state_transit(state_1, state_2, x, y, if_tap)
 	end
 	wait_for_state(state_2)
 end
-
-
-
-
 
 
 function waiting_clock(wait_time)
@@ -391,17 +385,17 @@ function tap_till_skip(end_state, tap_x, tap_y, lag)
   end
 end
 
-function myPressHomeKey()
-	mSleep(1000)
-	tap(1453, 1943)
-  mSleep(1000)
-  tap(772, 1240)
-  mSleep(1000)
-  tap(785, 1561)
-  mSleep(1000)
+
+function myRunAPP(id)
+	runApp(id)
+	mSleep(500)
+	flag = appIsRunning(id); --检测terminal是否在运行
+	while flag == 0 do --如果没有运行
+		runApp(id)
+		mSleep(500)
+		flag = appIsRunning(id);
+	end
 end
-
-
 
 
 function myScreenShot()
@@ -415,3 +409,31 @@ function myScreenShot()
 end
 
 
+
+function tap_close_till_stop(end_state, tap_x, tap_y, lag)
+	local tap_x = tap_x or 780
+	local tap_y = tap_y or 1402
+	local lag = lag or 300
+  local end_state = end_state or 故事模式抬头
+	keepScreen(true)
+  local skip_x, skip_y = myFindColor(end_state)
+	local skip_x_2, skip_y_2 = myFindColor(跳过剧情)
+	local close_x, close_y = myFindColor(Close)
+	keepScreen(false)
+  while skip_x == -1 do
+		if skip_x_2 > -1 then
+			tap(1324, 76)
+		elseif close_x > -1 then
+			--sysLog('close!')
+			tap(close_x, close_y)
+		else
+			tap(tap_x, tap_y)
+		end
+		mSleep(lag)
+		keepScreen(true)
+    skip_x, skip_y = myFindColor(end_state)
+		skip_x_2, skip_y_2 = myFindColor(跳过剧情)
+		close_x, close_y = myFindColor(Close)
+		keepScreen(false)
+  end
+end

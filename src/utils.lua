@@ -397,6 +397,17 @@ function myRunAPP(id)
 	end
 end
 
+function myCloseAPP(id)
+	closeApp(id)
+	mSleep(500)
+	flag = appIsRunning(id); --检测terminal是否在运行
+	while flag ~= 0 do --如果没有运行
+		closeApp(id)
+		mSleep(500)
+		flag = appIsRunning(id);
+	end
+end
+
 
 function myScreenShot()
   tap(1453, 1943)

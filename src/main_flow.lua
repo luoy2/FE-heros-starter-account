@@ -57,27 +57,31 @@ end
 
 function reset()
 	mark = createHUD()
-	closeApp("com.nintendo.zaba")
-	closeApp("com.officialscheduler.mterminal")
+	hideHUD(id)
+	myCloseAPP("com.nintendo.zaba")
+	myCloseAPP("com.officialscheduler.mterminal")
 	myRunAPP("com.officialscheduler.mterminal")
 	wait_for_state(命令完成)
 	local x, y = myFindColor(命令完成)
-	showHUD(mark,"等待脚本删除存档...",20,"0xff000000","0xffff0000",0,0,0,1534,y)      --显示HUD内容
+	showHUD(mark,"等待脚本删除存档.",30,"0xff000000","0xff2deb33",0,0,0,1534,y-5)      --显示HUD内容
 	inputText("su#ENTER#")
 	wait_for_state(命令完成)
 	inputText("alpine#ENTER#")
 	wait_for_state(命令完成)
 	x, y = myFindColor(命令完成)
-	showHUD(mark,"等待脚本删除存档...",20,"0xff000000","0xffff0000",0,0,0,1534,y)
+	showHUD(mark,"等待脚本删除存档..",30,"0xff000000","0xff2deb33",0,0,0,1534,y-5)
 	inputText('cd /var/mobile/Containers/Data/Application/ && rm "$(find . -name com.nintendo.zaba.plist -type f)"#ENTER#')
 	wait_for_state(命令完成)
 	x, y = myFindColor(命令完成)
-	showHUD(mark,"等待脚本删除存档...",20,"0xff000000","0xffff0000",0,0,0,1534,y)
+	showHUD(mark,"等待脚本删除存档...",30,"0xff000000","0xff2deb33",0,0,0,1534,y-5)
 	inputText("launchctl kickstart -k system/com.apple.cfprefsd.xpc.daemon#ENTER#")
 	wait_for_state(命令完成)
-	closeApp("com.officialscheduler.mterminal")
+	x, y = myFindColor(命令完成)
+	showHUD(mark,"等待脚本删除存档....",30,"0xff000000","0xff2deb33",0,0,0,1534,y-5)
+	myCloseAPP("com.officialscheduler.mterminal")
 	mSleep(1000)
 	hideHUD(mark)
+	id = createHUD()
 end
 
 
@@ -177,47 +181,40 @@ function main_flow()
 	my_toast(id, "正在下载")
 	wait_for_state(故事模式抬头)
   my_toast(id, '下载完成')
-	state_transit(prologue, prologue_part_1, 783, 683, true)
-	my_toast(id, '开始刷3个球')
-	wait_for_state(章节感叹号)
-	local if_fight_x, if_fight_y = myFindColor(章节感叹号)
-	for i = 1, 2, 1 do
-		my_toast(id, '开始第'..i..'次战斗')
-		if if_fight_x > -1 then
-			tap(if_fight_x+373, if_fight_y + 143)
-			mSleep(500)
-			tap(763, 1190)
-			tap_till_skip(主设置)
-			auto_combat()
-			tap_till_skip(得到orb)
-			wait_for_leaving_state(得到orb, {true, 771, 1243})
-			mSleep(500)
-			tap_till_skip(故事模式抬头, nil, nil, 1000)
-			wait_for_state(章节感叹号)
-			if_fight_x, if_fight_y = myFindColor(章节感叹号)
-		end
-	end
 	
-
-	my_toast(id, '开始第3次战斗')
-	tap(if_fight_x+373, if_fight_y + 143)
-	mSleep(500)
-	tap(763, 1190)
-	tap_till_skip(主设置)
-	auto_combat()
-	tap_till_skip(得到orb)
-	wait_for_leaving_state(得到orb, {true, 771, 1243})
-	--[[
-	wait_for_state(解锁章节)
-	wait_for_leaving_state(解锁章节, {true, 765, 1101})
-		wait_for_state(解锁章节)
-	wait_for_leaving_state(解锁章节, {true, 765, 1101})
-		wait_for_state(解锁章节)
-	wait_for_leaving_state(解锁章节, {true, 765, 1101})
-	--]]
-	my_toast(id, '3次战斗已完成')
-	tap_close_till_stop(故事模式抬头, nil, nil, 1000)
-
+	if _G.if_prologue == 0 then
+		state_transit(prologue, prologue_part_1, 783, 683, true)
+		my_toast(id, '开始刷3个球')
+		wait_for_state(章节感叹号)
+		local if_fight_x, if_fight_y = myFindColor(章节感叹号)
+		for i = 1, 2, 1 do
+			my_toast(id, '开始第'..i..'次战斗')
+			if if_fight_x > -1 then
+				tap(if_fight_x+373, if_fight_y + 143)
+				mSleep(500)
+				tap(763, 1190)
+				tap_till_skip(主设置)
+				auto_combat()
+				tap_till_skip(得到orb)
+				wait_for_leaving_state(得到orb, {true, 771, 1243})
+				mSleep(500)
+				tap_till_skip(故事模式抬头, nil, nil, 1000)
+				wait_for_state(章节感叹号)
+				if_fight_x, if_fight_y = myFindColor(章节感叹号)
+			end
+		end
+		
+		my_toast(id, '开始第3次战斗')
+		tap(if_fight_x+373, if_fight_y + 143)
+		mSleep(500)
+		tap(763, 1190)
+		tap_till_skip(主设置)
+		auto_combat()
+		tap_till_skip(得到orb)
+		wait_for_leaving_state(得到orb, {true, 771, 1243})
+		my_toast(id, '3次战斗已完成')
+		tap_close_till_stop(故事模式抬头, nil, nil, 1000)
+	end
 
   state_transit(故事模式退出, 得到orb, 278, 1949, true)
   my_toast(id, '得到奖励')
@@ -239,25 +236,39 @@ function main_flow()
 	wait_for_state(Redeem)
   tap(750, 1103)
 	wait_for_state(开始召唤)
-	for i = 1, 4, 1 do
-		my_toast(id, '召唤第'..i..'次')
-    召唤一次(summon_list[i][1], summon_list[i][2])
-    tap(952, 1841)
-    wait_for_state(开始召唤)
-  end
-	my_toast(id, '召唤第5次')
-	tap(summon_list[5][1],summon_list[5][2])
-	mSleep(500)
-	tap(783, 1832)
-	mSleep(1000)
-	tap_till_skip(召唤结束)
+	if _G.if_prologue == 0 then
+		for i = 1, 4, 1 do
+			my_toast(id, '召唤第'..i..'次')
+			召唤一次(summon_list[i][1], summon_list[i][2])
+			tap(952, 1841)
+			wait_for_state(开始召唤)
+		end
+			my_toast(id, '召唤第5次')
+			tap(summon_list[5][1],summon_list[5][2])
+			mSleep(500)
+			tap(783, 1832)
+			mSleep(1000)
+			tap_till_skip(召唤结束)
+	else
+		for i = 1, 3, 1 do
+			my_toast(id, '召唤第'..i..'次')
+			召唤一次(summon_list[i][1], summon_list[i][2])
+			tap(952, 1841)
+			wait_for_state(开始召唤)
+		end
+		my_toast(id, '召唤第4次')
+		召唤一次(summon_list[4][1],summon_list[4][2])
+	end
 	result_table, five_star_count = get_result()
-	result_table = get_result()
   if five_star_count < _G.end_condition then
     reset()
     return main_flow()
   else 
-		choice = dialogRet("英雄星级:"..result_table[1]..", "..result_table[2]..", "..result_table[3]..", "..result_table[4]..", "..result_table[5].."; 是否重刷?", "是", "否", "", 0);
+		if _G.if_prologue == 0 then
+			choice = dialogRet("英雄星级:"..result_table[1]..", "..result_table[2]..", "..result_table[3]..", "..result_table[4]..", "..result_table[5].."; 是否重刷?", "是", "否", "", 0);
+		else
+			choice = dialogRet("英雄星级:"..result_table[1]..", "..result_table[2]..", "..result_table[3]..", "..result_table[4].."; 是否重刷?", "是", "否", "", 0);
+		end
 		if choice == 0 then
 			reset()
 			return main_flow()

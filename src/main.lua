@@ -18,6 +18,8 @@ function main()
 	else
 		_G.ios = 8
 		_G.end_condition = tonumber(results['002'])+1
+		_G.if_prologue = tonumber(results['001'])
+		mSleep(1000)
 		reset()
 		return main_flow()
 	end
